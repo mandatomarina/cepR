@@ -19,3 +19,14 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(
 
 list_depth <- function(this) ifelse(is.list(this),
                                     1L + max(sapply(this, list_depth)), 0L)
+
+strip_names <- function(list, element){
+  x = purrr::map_chr(list, .null = NA_character_, element) %>%
+    discard(is.na) %>% unname()
+  return(x)
+}
+
+null_check <- function(list){
+  list <- purrr::map_if(list, is.null, ~ NA_character_)
+}
+

@@ -9,6 +9,7 @@
 #' @importFrom dplyr mutate
 #' @param estado sigla do estado (acronym of the state).
 #' @param cidade \code{character}. Nome da cidade, por exemplo, \code{"Salvador"}. (Name of the city.)
+#' @param logradouro street address.
 #' @param token Token de autorização. Veja <http://cepaberto.com/users/register>.
 #' @examples
 #' \dontrun{
@@ -20,7 +21,7 @@ busca_cidade <- function(estado = c("AC", "AL", "AP", "AM", "BA", "CE",
                                     "MG", "PA", "PB", "PR", "PE", "PI",
                                     "RJ", "RN", "RS", "RO", "RR", "SC",
                                     "SP", "SE", "TO"),
-                         cidade = "", token = NULL){
+                         cidade = "", logradouro = "", token = NULL){
 
   estado <- match.arg(estado, choices = c("AC", "AL", "AP", "AM", "BA", "CE",
                                           "DF", "ES", "GO", "MA", "MT", "MS",
@@ -32,15 +33,15 @@ busca_cidade <- function(estado = c("AC", "AL", "AP", "AM", "BA", "CE",
   }
 
   if(nchar(cidade) == 0){
-    url <- paste0("http://www.cepaberto.com/api/v2/ceps.json?estado=", estado)
+    url <- paste0("http://www.cepaberto.com/api/v3/address?estado=", estado)
   } else{
-    url <- paste0("http://www.cepaberto.com/api/v2/ceps.json?estado=",
+    url <- paste0("http://www.cepaberto.com/api/v3/address?estado=",
                   estado, "&cidade=", cidade)
   }
 
   auth <- paste0("Token token=", token)
   r <- httr::GET(url, httr::add_headers(Authorization = auth)) %>%
-    httr::content("parsed")
+    httr::content("parsed") %>% null_check()
 
   depth <- list_depth(r)
   if(depth == 1){

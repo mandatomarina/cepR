@@ -8,8 +8,11 @@
 #' @param cep CEP (postal code), \code{character}.
 #' @param token Token de autorização. Veja <http://cepaberto.com/users/register>.
 #' @export
-busca_cep <- function(cep = "01001000", token = NULL){
+busca_cep <- function(cep = NULL, token = NULL){
 
+  if(is.null(cep)){
+    stop("Um CEP \u00e9 preciso")
+  }
   if(nchar(cep) != 8){
     stop("O cep deve ter 8 digitos.")
   }
@@ -17,26 +20,25 @@ busca_cep <- function(cep = "01001000", token = NULL){
     stop("Um token \u00e9 preciso")
   }
 
-  url <- paste0("http://www.cepaberto.com/api/v2/ceps.json?cep=", cep)
+  url <- paste0("http://www.cepaberto.com/api/v3/cep?cep=", cep)
 
   auth <- paste0("Token token=", token)
   r <- httr::GET(url, httr::add_headers(Authorization = auth)) %>%
-    httr::content("parsed")
-  r <- list(r)
-  N <- NA_character_
+    httr::content("parsed") %>% null_check()
 
   CEP <- tibble::tibble(
-    estado = purrr::map_chr(r, .null = N, "estado"),
-    cidade = purrr::map_chr(r, .null = N, "cidade"),
-    bairro = purrr::map_chr(r, .null = N, "bairro"),
-    cep = purrr::map_chr(r, .null = N, "cep"),
-    logradouro = purrr::map_chr(r, .null = N, "logradouro"),
-    latitude = purrr::map_chr(r, .null = N, "latitude"),
-    longitude = purrr::map_chr(r, .null = N, "longitude"),
-    altitude = purrr::map_chr(r, .null = N, "altitude"),
-    ddd = purrr::map_chr(r, .null = N, "ddd"),
-    cod_IBGE = purrr::map_chr(r, .null = N, "ibge")
+    estado = strip_names(r, "sigla"),
+    cidade = strip_names(r, "nome"),
+    bairro = r$bairro,
+    cep = r$cep,
+    logradouro = r$logradouro,
+    latitude = r$latitude,
+    longitude = r$longitude,
+    altitude = r$altitude,
+    ddd = strip_names(r, "ddd"),
+    cod_IBGE = strip_names(r, "ibge")
   )
 
   return(CEP)
 }
+

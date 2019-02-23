@@ -4,14 +4,17 @@
 \alias{busca_cidade}
 \title{Busca Bairros por Estado}
 \usage{
-busca_cidade(estado = c("AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO",
-  "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO",
-  "RR", "SC", "SP", "SE", "TO"), cidade = "", token = NULL)
+busca_cidade(estado = c("AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES",
+  "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN",
+  "RS", "RO", "RR", "SC", "SP", "SE", "TO"), cidade = "",
+  logradouro = "", token = NULL)
 }
 \arguments{
 \item{estado}{sigla do estado (acronym of the state).}
 
 \item{cidade}{\code{character}. Nome da cidade, por exemplo, \code{"Salvador"}. (Name of the city.)}
+
+\item{logradouro}{street address.}
 
 \item{token}{Token de autorização. Veja <http://cepaberto.com/users/register>.}
 }

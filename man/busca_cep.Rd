@@ -4,7 +4,7 @@
 \alias{busca_cep}
 \title{Busca por CEP}
 \usage{
-busca_cep(cep = "01001000", token = NULL)
+busca_cep(cep = NULL, token = NULL)
 }
 \arguments{
 \item{cep}{CEP (postal code), \code{character}.}

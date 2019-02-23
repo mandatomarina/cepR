@@ -27,27 +27,26 @@ busca_latlon <- function(lat = NULL, long = NULL, token = NULL){
     stop("Um token \u00e9 preciso")
   }
 
-  url <- paste0("http://www.cepaberto.com/api/v2/ceps.json?lat=",
+  url <- paste0("http://www.cepaberto.com/api/v3/nearest?lat=",
                 lat, "&lng=", long)
 
   auth <- paste0("Token token=", token)
   r <- httr::GET(url, httr::add_headers(Authorization = auth)) %>%
-    httr::content("parsed")
+    httr::content("parsed") %>% null_check()
 
-  depth <- list_depth(r)
 
-  if(depth == 1){
-    r <- list(r)
-  }
+  result <- tibble::tibble(
+    cidade = strip_names(r, "nome"),
+    latitude = r$latitude,
+    longitude = r$longitude,
+    altitude = r$altitude,
+    cep = r$cep,
+    estado = strip_names(r, "sigla"),
+    logradouro = r$logradouro,
+    bairro = r$bairro,
+    ddd = strip_names(r, "ddd"),
+    cod_IBGE = strip_names(r, "ibge")
+  )
 
-  df <- setNames(object = data.frame(do.call(rbind, lapply(r, as.character, unlist)),
-                                     stringsAsFactors = FALSE),
-                nm = names(r[[1]]))
-  df <- replace(df, df == "NULL", NA) %>% tibble::as.tibble()
-  df <- df %>%
-    dplyr::mutate(latitude = as.numeric(latitude),
-                  longitude = as.numeric(longitude),
-                  altitude = as.numeric(altitude))
-
-  return(df)
+  return(result)
 }
