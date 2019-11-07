@@ -17,7 +17,7 @@ busca_cep <- function(cep = "01001000", token = NULL){
     stop("Um token \u00e9 preciso")
   }
 
-  url <- paste0("http://www.cepaberto.com/api/v2/ceps.json?cep=", cep)
+  url <- paste0("http://www.cepaberto.com/api/v3/ceps?cep=", cep)
 
   auth <- paste0("Token token=", token)
   r <- httr::GET(url, httr::add_headers(Authorization = auth)) %>%
